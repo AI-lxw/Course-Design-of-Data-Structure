@@ -1,0 +1,278 @@
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>多节点归并排序</title>
+    <link rel="stylesheet" href="layui/css/layui.css" type="text/css" media="all">
+    <link rel="stylesheet" href="css/single.css" type="text/css" media="all">
+</head>
+
+<body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <div class="layui-logo">多节点归并排序</div>
+        </div>
+
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a class="" href="javascript:;">工作方式</a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="/single">单节点排序</a></dd>
+                            <dd><a href="/multi">多节点归并排序</a></dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="layui-body">
+            <!-- 内容主体区域 -->
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                <legend>数据接收显示</legend>
+            </fieldset>
+            <div style="padding: 15px;">
+                
+                <table cellspacing="0" cellpadding="0" border="0" class="layui-table" >
+                    <thead>
+                        <tr>
+                            <th>
+                                <div class="layui-table-cell" align="left">
+                                <span>ip</span>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="layui-table-cell" align="left">
+                                <span>主机名</span>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="layui-table-cell" align="left">
+                                <span>主机序号</span>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="layui-table-cell" align="left">
+                                    <span>哈夫曼压缩进程</span>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="layui-table-cell" align="left">
+                                    <span>图片传输进程</span>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="layui-table-cell" align="left">
+                                    <span>哈夫曼解码进程</span>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="data_list">
+                    </tbody>
+                </table>
+                <!-- <button type="button" class="layui-btn hide" id="start">开始压缩</button> -->
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                    <legend></legend>
+                </fieldset>
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                    <legend>多节点归并排序结果</legend>
+                </fieldset>
+                <table cellspacing="0" cellpadding="0" border="0" class="layui-table" >
+                        <thead>
+                            <tr>
+                            <th>
+                                <div class="layui-table-cell" align="left">
+                                <span>序号</span>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="layui-table-cell" align="left">
+                                <span>源主机</span>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="layui-table-cell" align="left">
+                                <span>目的主机</span>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="layui-table-cell" align="left">
+                                <span>文件名</span>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="layui-table-cell" align="left">
+                                    <span>文件大小</span>
+                                </div>
+                            </th>
+                            
+                            </tr>
+                        </thead>
+                        <tbody id="sort_list">
+                        </tbody>
+                    </table>
+                
+            </div>
+        </div>
+
+        <div class="layui-footer">
+            <!-- 底部固定区域 -->
+            分布式系统中排序应用
+        </div>
+    </div>
+    
+</body>
+<script src="layui/layui.js"></script>
+    <script src="http://localhost:3000/js/socket.io.js"></script>
+    <script>
+
+        layui.use('layer', function(){
+        var layer = layui.layer;
+        var start_btn = document.getElementById("start");
+        var data_list = document.getElementById("data_list");
+        var sort_list = document.getElementById("sort_list");
+        var socket = io('http://localhost:3000/');
+            socket.on('connect', function(){
+                console.log('连接成功');
+            });
+            socket.on('msg', function(data){
+                var 
+                    hostnames = document.querySelectorAll("#data_list div.hostname"),
+                    ahuf_completed = document.querySelectorAll('#data_list span.huf_completed'),
+                    ahuf_total = document.querySelectorAll('#data_list span.huf_total');
+                var atrsl_completed = document.querySelectorAll("#data_list span.completed"),
+                    atrsl_total = document.querySelectorAll("#data_list span.total");
+                var sort_row = document.querySelectorAll('#sort_list > tr'),
+                    iscompleted = document.querySelectorAll("#data_list div.iscompleted"),
+                    d_completed = document.querySelectorAll('#data_list span.d_completed'),
+                    d_total = document.querySelectorAll('#data_list span.d_total');
+                
+                
+                switch (data.Flag) {
+                    case 'HOST':
+                        var 
+                            HostIP = `<tr><td><div>${data.HostIP}</div></td>`,//ip
+                            HostName = `<td><div class = 'hostname'>${data.HostName}</div></td>`,
+                            HostSeq = `<td><div>${data.HostSeq}</div></td>`,//标志
+                            // Flag = `<td><div>${null}</div></td>`,//
+                            huf_com_prog = `<td><div><span class = 'huf_completed'>0</span>/<span class='huf_total'>0</span></div></td>`,
+                            pic_trsl_prog = `<td><div class = 'iscompleted'>未完成</div></td>`,
+                            huf_de_prog = `<td><div><span class = 'd_completed'>0</span>/<span class='d_total'>0</span></div></td>`;
+                            
+                        var str = HostIP + HostName + HostSeq  +huf_com_prog +pic_trsl_prog + huf_de_prog ;
+                        data_list.innerHTML += str;
+                        start_btn.classList.remove("hide")
+                        start_btn.classList.add("display");
+                        // start_btn.onclick = function(){
+                        //     
+                        // }
+                        setTimeout(() => {
+                            var row = document.querySelectorAll("#data_list  tr");
+                                console.log(hostnames);
+                            
+                            for (let i = 0; i < row.length; i++) {
+                                var name = hostnames[i].innerHTML;
+                                row[i].onclick = function(){
+                                    layer.open({
+                                        content: '即将进行哈夫曼压缩',
+                                        yes: function(index, layero){
+                                            socket.emit('send',{hostName:name,code:2})
+                                            layer.close(index); //如果设定了yes回调，需进行手工关闭
+                                        }
+                                    });  
+                                }
+                                
+                            }
+                        }, 1000);
+                        break;
+                    case 'HUFF':
+                        
+                        //渲染哈夫曼压缩进度
+                        for (let i = 0; i < hostnames.length; i++) {
+                            
+                            if (data.HostName == hostnames[i].innerHTML) {
+                                ahuf_completed[i].innerHTML=data.Completed;
+                                ahuf_total[i].innerHTML = data.Total;
+                            }
+                            
+                        }
+                        break;
+                    case 'PSNT':
+                        for (let i = 0; i < hostnames.length; i++) {
+                            if (hostnames[i].innerHTML == data.HostName) {
+                                iscompleted[i].innerHTML = '已完成' 
+                            }
+                            
+                        }
+                        break;
+                    case 'SORT':
+                            // socket.emit('send','1111')
+                        break;
+                        
+                    case 'SSNT':
+                        // socket.emit('send','1111')
+                        break;
+                        
+                    case 'SFIN':
+                    // socket.emit('send','1111')
+                        break;
+                    case 'DSTB':
+                    // socket.emit('send','1111')
+                        break;
+                    case 'RSLT':
+                        var Seq = `<tr><td><div class = 'seq'>${data.Seq}</div></td>`,
+                            SrcHostName = `<td><div>${data.SrcHostName}</div></td>`,//ip
+                            DstHostName = `<td><div>${data.DstHostName}</div></td>`,
+                            PictureName = `<td><div>${data.PictureName}</div></td>`,//标志
+                            // Flag = `<td><div>${null}</div></td>`,//
+                            Size = `<td><div>${data.Size}</div></td>`;
+                            
+                            var str = Seq + SrcHostName + DstHostName + PictureName  + Size ;
+                            sort_list.innerHTML += str;
+                            break;
+                    case 'DEHF':
+                        for (let i = 0; i < hostnames.length; i++) {
+                            
+                            if (data.HostName == hostnames[i].innerHTML) {
+                                d_completed[i].innerHTML = data.Completed;
+                                d_total[i].innerHTML = data.Total;
+                            }
+                            
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                // for (let i = 0; i < row.length; i++) {
+                //     row[i].onclick = function(){
+                //         layer.open({
+                //             content: '主机名返回后台',
+                //             yes: function(index, layero){
+                //                 //do something
+                //                 layer.close(index); //如果设定了yes回调，需进行手工关闭
+                //             }
+                //         });  
+                //     }
+                    
+                // }
+                
+            });   
+            socket.on('disconnect', function(){
+                console.log('连接关闭');
+            });
+        
+        
+        
+        });  
+        
+
+        
+        
+    </script>
+
+</html>

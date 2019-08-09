@@ -1,0 +1,274 @@
+
+<html>
+
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+            <title>单节点排序</title>
+            <link rel="stylesheet" href="layui/css/layui.css" type="text/css" media="all">
+            <link rel="stylesheet" href="css/single.css" type="text/css" media="all">
+        </head>
+        
+        <body class="layui-layout-body">
+            <div class="layui-layout layui-layout-admin">
+                <div class="layui-header">
+                    <div class="layui-logo">单节点排序</div>
+                </div>
+        
+                <div class="layui-side layui-bg-black">
+                    <div class="layui-side-scroll">
+                        <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                        <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                            <li class="layui-nav-item layui-nav-itemed">
+                                <a class="" href="javascript:;">工作方式</a>
+                                <dl class="layui-nav-child">
+                                    <dd><a href="javascript:0;" id="btn_single">单节点排序</a></dd>
+                                    <dd><a href="javascript:0;" id="btn_multi">多节点归并排序</a></dd>
+                                </dl>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+        
+                <div class="layui-body " id="box1" >
+                    <!-- 内容主体区域 -->
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                        <legend>数据接收显示</legend>
+                    </fieldset>
+                    <div style="padding: 15px;">
+                       
+                        <table cellspacing="0" cellpadding="0" border="0" class="layui-table" >
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="layui-table-cell" align="left">
+                                        <span>IP</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="layui-table-cell" align="left">
+                                        <span>主机名</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="layui-table-cell" align="left">
+                                        <span>主机序号</span>
+                                        </div>
+                                    </th>
+                                    <!-- <th>
+                                        <div class="layui-table-cell" align="left">
+                                        <span>文件大小</span>
+                                        </div>
+                                    </th> -->
+                                    <th>
+                                        <div class="layui-table-cell" align="left">
+                                            <span>哈夫曼压缩进程</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="layui-table-cell" align="left">
+                                            <span>图片传输进程</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="layui-table-cell" align="left">
+                                            <span>接收完成情况</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="layui-table-cell" align="left">
+                                            <span>哈夫曼解码进程</span>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="data_list">
+                            </tbody>
+                        </table>
+                        <!-- <button type="button" class="layui-btn" id="start">开始压缩</button> -->
+                        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                            <legend></legend>
+                        </fieldset>
+                        <div class="hide" id="wrap">
+                            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                                <legend>单节点排序结果</legend>
+                            </fieldset>
+                            <table cellspacing="0" cellpadding="0" border="0" class="layui-table" >
+                                    <thead>
+                                        <tr>
+                                        <th>
+                                            <div class="layui-table-cell" align="left">
+                                            <span>序号</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="layui-table-cell" align="left">
+                                            <span>图片名</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="layui-table-cell" align="left">
+                                            <span>源主机名</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="layui-table-cell" align="left">
+                                            <span>哈夫曼压缩大小</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="layui-table-cell" align="left">
+                                                <span>目的主机名</span>
+                                            </div>
+                                        </th>
+                                        
+                                        </tr>
+                                    </thead>
+                                    <tbody id="sort_list">
+                                    </tbody>
+                            </table>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="layui-body hide" id="box2">
+                    <!-- 内容主体区域 -->
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                        <legend>数据接收显示</legend>
+                    </fieldset>
+                    <div style="padding: 15px;">
+                       
+                        <table cellspacing="0" cellpadding="0" border="0" class="layui-table" >
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="layui-table-cell" align="left">
+                                        <span>IP</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="layui-table-cell" align="left">
+                                        <span>主机名</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="layui-table-cell" align="left">
+                                        <span>主机序号</span>
+                                        </div>
+                                    </th>
+    
+                                    <th>
+                                        <div class="layui-table-cell" align="left">
+                                            <span>哈夫曼压缩进程</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="layui-table-cell" align="left">
+                                            <span>图片传输进程</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="layui-table-cell" align="left">
+                                            <span>节点接收完成情况</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="layui-table-cell" align="left">
+                                            <span>传送完成情况</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="layui-table-cell" align="left">
+                                            <span>主节点排序完成情况</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="layui-table-cell" align="left">
+                                            <span>哈夫曼解码进程</span>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="data_list">
+                            </tbody>
+                        </table>
+                        <!-- <button type="button" class="layui-btn" id="start">开始压缩</button> -->
+                        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                            <legend></legend>
+                        </fieldset>
+                        <div class="hide" id="wrap">
+                            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                                <legend>单节点排序结果</legend>
+                            </fieldset>
+                            <table cellspacing="0" cellpadding="0" border="0" class="layui-table" >
+                                    <thead>
+                                        <tr>
+                                        <th>
+                                            <div class="layui-table-cell" align="left">
+                                            <span>序号</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="layui-table-cell" align="left">
+                                            <span>图片名</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="layui-table-cell" align="left">
+                                            <span>源主机名</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="layui-table-cell" align="left">
+                                            <span>哈夫曼压缩大小</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="layui-table-cell" align="left">
+                                                <span>目的主机名</span>
+                                            </div>
+                                        </th>
+                                        
+                                        </tr>
+                                    </thead>
+                                    <tbody id="sort_list">
+                                    </tbody>
+                            </table>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+        
+                <div class="layui-footer">
+                    <!-- 底部固定区域 -->
+                    分布式系统中排序应用
+                </div>
+            </div>
+            
+        </body>
+
+        <script src="layui/layui.js"></script>
+        <script>
+            var box1 = document.getElementById("box1"),
+                box2 = document.getElementById("box2"),
+                btn_single = document.getElementById("btn_single"),
+                btn_multi = document.getElementById("btn_multi");
+                
+            btn_single.onclick = function(){
+                box1.classList.remove('hide');
+                box1.classList.add('display');
+                box2.classList.remove('display');
+                box2.classList.add('hide');
+            }
+            btn_multi.onclick = function(){
+                box2.classList.remove('hide');
+                box2.classList.add('display');
+                box1.classList.remove('display');
+                box1.classList.add('hide');
+            }
+        </script>
+        <script src="http://localhost:3000/js/socket.io.js"></script>
+        <script src="js/index.js"></script>
+        
+        </html>
